@@ -9,5 +9,8 @@
 import Foundation
 
 struct K {
-    static let qCellID = "QuoteCell"
+    static let quoteCellIdentifier = "QuoteCell"
+    static let iap = "com.grodnoapps.InspoQuotes.PremiumQuotes"
+    static let darkColorName = "dark"
+    static let lightColorName = "light"
 }
