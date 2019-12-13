@@ -10,6 +10,8 @@ import UIKit
 
 class QuoteTableViewController: UITableViewController {
     
+    let productID = K.iap
+    
     var quotesToShow = [
         "Our greatest glory is not in never falling, but in rising every time we fall. — Confucius",
         "All our dreams can come true, if we have the courage to pursue them. – Walt Disney",
@@ -27,14 +29,9 @@ class QuoteTableViewController: UITableViewController {
         "Your true success in life begins only when you make the commitment to become excellent at what you do. — Brian Tracy",
         "Believe in yourself, take on your challenges, dig deep within yourself to conquer fears. Never let anyone bring you down. You got to keep going. – Chantal Sutherland"
     ]
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        //tableView.separatorStyle = .none
-    }
-
+    
     // MARK: - Table view data source
-
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
         return quotesToShow.count + 1
@@ -51,21 +48,69 @@ class QuoteTableViewController: UITableViewController {
             cell.textLabel?.text = "Get More Quotes"
             //setting text color to fit the theme.
             cell.textLabel?.textColor = UIColor(named: K.lightColorName)
+            //making arrow appear
             cell.accessoryType = .disclosureIndicator
         }
         return cell
     }
-    
+    //MARK: - Table View Delegate
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         if indexPath.row == quotesToShow.count {
             //trying to purchase shit
+            buyPremiumQuotes()
         }
+    }
+    //user paid
+    func userPaid() {
+        //
+    }
+}
+//MARK: - In-App Purchase Methods
+
+import StoreKit
+
+extension QuoteTableViewController: SKPaymentTransactionObserver {
+    //detecting successful payments
+    func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
+        //transaction updated
+        for transaction in transactions {
+            switch transaction.transactionState {
+            case .purchased:
+                print("Transaction successful!")
+                SKPaymentQueue.default().finishTransaction(transaction)
+            case .failed:
+                print("Transaction failed!")
+                print(transaction.error?.localizedDescription)
+                SKPaymentQueue.default().finishTransaction(transaction)
+            default:
+                print("Tansaction Irrelevant")
+            }
+        }
+    }
+    
+    func buyPremiumQuotes() {
+        //whether user can make a purchase
+        guard SKPaymentQueue.canMakePayments() else {
+            fatalError("User can't make payments")
+        }
+        //new request
+        let paymentRequest = SKMutablePayment()
+        paymentRequest.productIdentifier = productID
+        //request payment
+        SKPaymentQueue.default().add(paymentRequest)
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        //tableView.separatorStyle = .none
+        //adding obeserver
+        SKPaymentQueue.default().add(self)
     }
     
     @IBAction func restorePressed(_ sender: UIBarButtonItem) {
         
     }
-
-
+    
+    
 }
