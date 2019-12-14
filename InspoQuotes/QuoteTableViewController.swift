@@ -62,8 +62,11 @@ class QuoteTableViewController: UITableViewController {
         }
     }
     //user paid
-    func userPaid() {
-        //
+    func showPremiumQuotes() {
+        //changing data source
+        quotesToShow.append(contentsOf: premiumQuotes)
+        //reloading data
+        tableView.reloadData()
     }
 }
 //MARK: - In-App Purchase Methods
@@ -79,10 +82,20 @@ extension QuoteTableViewController: SKPaymentTransactionObserver {
             case .purchased:
                 print("Transaction successful!")
                 SKPaymentQueue.default().finishTransaction(transaction)
+                showPremiumQuotes()
             case .failed:
                 print("Transaction failed!")
-                print(transaction.error?.localizedDescription)
+                print(transaction.error!.localizedDescription)
                 SKPaymentQueue.default().finishTransaction(transaction)
+            case .purchasing:
+                //purchasing
+                print("Transaction processing!")
+            case .deferred:
+                //deferred payment
+                print("Transaction deferred!")
+            case .restored:
+                SKPaymentQueue.default().finishTransaction(transaction)
+                showPremiumQuotes()
             default:
                 print("Tansaction Irrelevant")
             }
