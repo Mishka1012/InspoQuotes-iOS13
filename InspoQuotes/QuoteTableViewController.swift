@@ -12,6 +12,8 @@ class QuoteTableViewController: UITableViewController {
     
     let productID = K.iap
     
+    @IBOutlet weak var restoreButton: UIBarButtonItem!
+    
     var quotesToShow = [
         "Our greatest glory is not in never falling, but in rising every time we fall. — Confucius",
         "All our dreams can come true, if we have the courage to pursue them. – Walt Disney",
@@ -72,6 +74,8 @@ class QuoteTableViewController: UITableViewController {
         quotesToShow.append(contentsOf: premiumQuotes)
         //reloading data
         tableView.reloadData()
+        //hiding button
+        restoreButton.isEnabled = false
     }
     func isPurchased() -> Bool {
         let purchaseStatus = UserDefaults.standard.bool(forKey: productID)
@@ -87,31 +91,22 @@ extension QuoteTableViewController: SKPaymentTransactionObserver {
     func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
         //transaction updated
         for transaction in transactions {
-            switch transaction.transactionState {
-            case .purchased:
-                print("Transaction successful!")
-                SKPaymentQueue.default().finishTransaction(transaction)
+            let transactionState = transaction.transactionState
+            if transactionState == .purchased {
                 showPremiumQuotes()
                 //persisting premium status
                 UserDefaults.standard.set(true, forKey: productID)
-            case .failed:
-                print("Transaction failed!")
-                print(transaction.error!.localizedDescription)
-                SKPaymentQueue.default().finishTransaction(transaction)
-            case .purchasing:
-                //purchasing
-                print("Transaction processing!")
-            case .deferred:
-                //deferred payment
-                print("Transaction deferred!")
-            case .restored:
-                SKPaymentQueue.default().finishTransaction(transaction)
+            } else if transactionState == .failed {
+                //do nothing here
+            } else if transactionState == .restored {
                 showPremiumQuotes()
                 //persisting premium status
                 UserDefaults.standard.set(true, forKey: productID)
-            default:
+            } else {
                 print("Tansaction Irrelevant")
+                continue
             }
+            SKPaymentQueue.default().finishTransaction(transaction)
         }
     }
     
@@ -138,7 +133,7 @@ extension QuoteTableViewController: SKPaymentTransactionObserver {
     }
     
     @IBAction func restorePressed(_ sender: UIBarButtonItem) {
+        SKPaymentQueue.default().restoreCompletedTransactions()
     }
-    
     
 }

@@ -37,6 +37,9 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <outlet property="restoreButton" destination="J2Y-og-Rc8" id="XWn-FS-W7q"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1WA-Nv-d1Y" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -74,8 +77,11 @@
         <namedColor name="dark">
             <color red="0.32022720580000003" green="0.44158774610000001" blue="0.99940711260000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
+        <namedColor name="dark">
+            <color red="0.31999999284744263" green="0.44200000166893005" blue="0.99900001287460327" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
         <namedColor name="light">
-            <color red="0.78705006840000002" green="0.88671869039999995" blue="0.39709144829999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.78700000047683716" green="0.88700002431869507" blue="0.3970000147819519" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
     </resources>
 </document>
