@@ -34,7 +34,10 @@ class QuoteTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return quotesToShow.count + 1
+        guard isPurchased() else {
+            return quotesToShow.count + 1
+        }
+        return quotesToShow.count
     }
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: K.quoteCellIdentifier, for: indexPath)
@@ -43,7 +46,7 @@ class QuoteTableViewController: UITableViewController {
             //allowing to have text multiline
             cell.textLabel?.numberOfLines = 0
             //setting text color to fit the theme.
-            cell.textLabel?.textColor = indexPath.row % 2 == 1 ? UIColor(named: K.darkColorName) : UIColor(named: K.lightColorName)
+            cell.textLabel?.textColor = UIColor(named: K.darkColorName)
             //accessory type
             cell.accessoryType = .none
         } else {
@@ -70,6 +73,10 @@ class QuoteTableViewController: UITableViewController {
         //reloading data
         tableView.reloadData()
     }
+    func isPurchased() -> Bool {
+        let purchaseStatus = UserDefaults.standard.bool(forKey: productID)
+        return purchaseStatus
+    }
 }
 //MARK: - In-App Purchase Methods
 
@@ -85,6 +92,8 @@ extension QuoteTableViewController: SKPaymentTransactionObserver {
                 print("Transaction successful!")
                 SKPaymentQueue.default().finishTransaction(transaction)
                 showPremiumQuotes()
+                //persisting premium status
+                UserDefaults.standard.set(true, forKey: productID)
             case .failed:
                 print("Transaction failed!")
                 print(transaction.error!.localizedDescription)
@@ -98,6 +107,8 @@ extension QuoteTableViewController: SKPaymentTransactionObserver {
             case .restored:
                 SKPaymentQueue.default().finishTransaction(transaction)
                 showPremiumQuotes()
+                //persisting premium status
+                UserDefaults.standard.set(true, forKey: productID)
             default:
                 print("Tansaction Irrelevant")
             }
@@ -121,11 +132,12 @@ extension QuoteTableViewController: SKPaymentTransactionObserver {
         //tableView.separatorStyle = .none
         //adding obeserver
         SKPaymentQueue.default().add(self)
+        if isPurchased() {
+            showPremiumQuotes()
+        }
     }
     
     @IBAction func restorePressed(_ sender: UIBarButtonItem) {
-        //testing
-        showPremiumQuotes()
     }
     
     
