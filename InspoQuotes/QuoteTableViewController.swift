@@ -43,7 +43,9 @@ class QuoteTableViewController: UITableViewController {
             //allowing to have text multiline
             cell.textLabel?.numberOfLines = 0
             //setting text color to fit the theme.
-            cell.textLabel?.textColor = UIColor(named: K.darkColorName)
+            cell.textLabel?.textColor = indexPath.row % 2 == 1 ? UIColor(named: K.darkColorName) : UIColor(named: K.lightColorName)
+            //accessory type
+            cell.accessoryType = .none
         } else {
             cell.textLabel?.text = "Get More Quotes"
             //setting text color to fit the theme.
@@ -122,7 +124,8 @@ extension QuoteTableViewController: SKPaymentTransactionObserver {
     }
     
     @IBAction func restorePressed(_ sender: UIBarButtonItem) {
-        
+        //testing
+        showPremiumQuotes()
     }
     
     
